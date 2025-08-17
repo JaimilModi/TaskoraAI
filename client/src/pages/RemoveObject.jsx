@@ -103,7 +103,17 @@ const RemoveObject = () => {
             </div>
           </div>
         ) : (
-          <img src={content} alt="image" className="mt-3 w-full h-full" />
+          <div className="mt-3 w-full flex flex-col items-center gap-3">
+            <img
+              src={content}
+              alt="image"
+              className="w-full h-full rounded-lg"
+            />
+            <p className="text-xs text-gray-500 text-center">
+              💡 On <b>PC/Laptop</b>: Right-click → "Save image as" <br />
+              📱 On <b>Mobile</b>: Long press → "Download/Save image"
+            </p>
+          </div>
         )}
       </div>
     </div>
