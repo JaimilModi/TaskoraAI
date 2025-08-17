@@ -8,7 +8,7 @@ const Testimonial = () => {
       name: "John Doe",
       title: "Marketing Director, TechCorp",
       content:
-        "QuickAI has revolutionized our content workflow. The quality of the articles is outstanding, and it saves us hours of work every week.",
+        "TaskoraAI has revolutionized our content workflow. The quality of the articles is outstanding, and it saves us hours of work every week.",
       rating: 4,
     },
     {
@@ -17,7 +17,7 @@ const Testimonial = () => {
       name: "Jane Smith",
       title: "Content Creator, TechCorp",
       content:
-        "QuickAI has made our content creation process effortless. The AI tools have helped us produce high-quality content faster than ever before.",
+        "TaskoraAI has made our content creation process effortless. The AI tools have helped us produce high-quality content faster than ever before.",
       rating: 5,
     },
     {
@@ -26,7 +26,7 @@ const Testimonial = () => {
       name: "David Lee",
       title: "Content Writer, TechCorp",
       content:
-        "QuickAI has transformed our content creation process. The AI tools have helped us produce high-quality content faster than ever before.",
+        "TaskoraAI has transformed our content creation process. The AI tools have helped us produce high-quality content faster than ever before.",
       rating: 4,
     },
   ];
