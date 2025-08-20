@@ -99,6 +99,14 @@ const RemoveBackground = () => {
               💡 On <b>PC/Laptop</b>: Right-click → "Save image as" <br />
               📱 On <b>Mobile</b>: Long press → "Download/Save image"
             </p>
+            <p className="text-xs text-blue-500 text-center mt-2">
+              ⏳ Processed image may take up to <b>1 minute</b> to load. Please
+              wait...
+            </p>
+            <p className="text-xs text-red-500 text-center mt-1">
+              ⚠️ If the processed image does not show changes, the background
+              may be too complex or not applicable for removal.
+            </p>
           </div>
         )}
       </div>

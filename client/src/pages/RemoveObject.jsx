@@ -21,7 +21,7 @@ const RemoveObject = () => {
       setLoading(true);
 
       if (object.split(" ").length > 1) {
-        return toast("Plese enter only one object name");
+        return toast("Please enter only one object name");
       }
 
       const formData = new FormData();
@@ -72,7 +72,7 @@ const RemoveObject = () => {
           value={object}
           rows={4}
           className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
-          placeholder="e.g,, watch or spoon , Only single object name"
+          placeholder="e.g., watch or spoon (only single object name)"
           required
         />
 
@@ -112,6 +112,14 @@ const RemoveObject = () => {
             <p className="text-xs text-gray-500 text-center">
               💡 On <b>PC/Laptop</b>: Right-click → "Save image as" <br />
               📱 On <b>Mobile</b>: Long press → "Download/Save image"
+            </p>
+            <p className="text-xs text-blue-500 text-center mt-2">
+              ⏳ Processed image may take up to <b>1 minute</b> to load. Please
+              wait...
+            </p>
+            <p className="text-xs text-red-500 text-center mt-1">
+              ⚠️ If the processed image does not show changes, the given object
+              name may be invalid or not applicable for removal.
             </p>
           </div>
         )}
