@@ -8,7 +8,7 @@ import BlogTitles from "./pages/BlogTitles";
 import GenerateImages from "./pages/GenerateImages";
 import RemoveBackground from "./pages/RemoveBackground";
 import RemoveObject from "./pages/RemoveObject";
-import ReviewResume from "./pages/ReviewResume";
+import ReviewPDF from "./pages/ReviewPdf";
 import Community from "./pages/Community";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
@@ -27,7 +27,7 @@ const App = () => {
           <Route path="generate-images" element={<GenerateImages />} />
           <Route path="remove-background" element={<RemoveBackground />} />
           <Route path="remove-object" element={<RemoveObject />} />
-          <Route path="review-resume" element={<ReviewResume />} />
+          <Route path="review-pdf" element={<ReviewPDF />} />
           <Route path="community" element={<Community />} />
         </Route>
       </Routes>

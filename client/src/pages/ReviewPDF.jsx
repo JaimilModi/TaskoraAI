@@ -7,7 +7,7 @@ import Markdown from "react-markdown";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
-const ReviewResume = () => {
+const ReviewPDF = () => {
   const [input, setInput] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -21,9 +21,9 @@ const ReviewResume = () => {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("resume", input);
+      formData.append("pdf", input);
 
-      const { data } = await axios.post("/api/ai/resume-review", formData, {
+      const { data } = await axios.post("/api/ai/review-pdf", formData, {
         headers: { Authorization: `Bearer ${await getToken()}` },
       });
 
@@ -46,9 +46,9 @@ const ReviewResume = () => {
       >
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 text-[#00DA83]" />
-          <h1 className="text-xl font-semibold">Resume Review</h1>
+          <h1 className="text-xl font-semibold">PDF Review</h1>
         </div>
-        <p className="mt-6 text-sm font-medium">Upload Resume</p>
+        <p className="mt-6 text-sm font-medium">Upload PDF</p>
         <input
           onChange={(e) => setInput(e.target.files[0])}
           type="file"
@@ -57,7 +57,7 @@ const ReviewResume = () => {
           required
         />
         <p className="text-xs text-gray-500 font-light mt-1">
-          Supports PDF resume only.
+          Supports PDF only.
         </p>
         <button
           disabled={loading}
@@ -68,7 +68,7 @@ const ReviewResume = () => {
           ) : (
             <FileText className="w-5" />
           )}
-          Review Resume
+          Review PDF
         </button>
       </form>
       {/* right col */}
@@ -81,7 +81,7 @@ const ReviewResume = () => {
           <div className="flex-1 flex justify-center items-center">
             <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
               <FileText className="w-9 h-9" />
-              <p>Upload a Resume and click "Review Resume" to get started</p>
+              <p>Upload a PDF and click "Review PDF" to get started</p>
             </div>
           </div>
         ) : (
@@ -96,4 +96,4 @@ const ReviewResume = () => {
   );
 };
 
-export default ReviewResume;
+export default ReviewPDF;

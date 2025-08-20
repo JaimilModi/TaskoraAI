@@ -202,10 +202,10 @@ export const removeImageObject = async (req, res) => {
   }
 };
 
-export const resumeReview = async (req, res) => {
+export const reviewPdf = async (req, res) => {
   try {
     const { userId } = req.auth();
-    const resume = req.file;
+    const PDF = req.file;
     const plan = req.plan;
 
     if (plan !== "premium") {
@@ -215,17 +215,17 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    if (resume.size > 5 * 1024 * 1024) {
+    if (PDF.size > 5 * 1024 * 1024) {
       return res.json({
         success: false,
-        message: "Resume file size exceeds allowed size (5MB).",
+        message: "PDF file size exceeds allowed size (5MB).",
       });
     }
 
-    const dataBuffer = fs.readFileSync(resume.path);
+    const dataBuffer = fs.readFileSync(PDF.path);
     const pdfData = await pdf(dataBuffer);
 
-    const prompt = `Review the following resume and provide constructive feedback on its strengts, weeknesses and areas for improvement. Resume Content:\n\n${pdfData.text}`;
+    const prompt = `Please review the attached PDF as a whole document. Provide detailed and constructive feedback on its content, structure, clarity, tone, and overall presentation. Treat this as a single, complete PDF for analysis and share specific suggestions for improvement. (note:just start with Here's a detailed and constructive review or anything and give max 600 words content):\n\n${pdfData.text}`;
 
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
@@ -240,7 +240,7 @@ export const resumeReview = async (req, res) => {
     });
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, 'Review the resume', ${content},'resume-review')`;
+    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, 'Review the pdf', ${content},'review-pdf')`;
 
     res.json({ success: true, content: content });
   } catch (error) {
