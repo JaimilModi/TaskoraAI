@@ -8,7 +8,7 @@ import BlogTitles from "./pages/BlogTitles";
 import GenerateImages from "./pages/GenerateImages";
 import RemoveBackground from "./pages/RemoveBackground";
 import RemoveObject from "./pages/RemoveObject";
-import ReviewPDF from "./pages/ReviewPdf";
+import ReviewPDF from "./pages/ReviewPDF";
 import Community from "./pages/Community";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
