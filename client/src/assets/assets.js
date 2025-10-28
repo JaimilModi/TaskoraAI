@@ -57,11 +57,11 @@ export const AiToolsData = [
         path: '/ai/remove-object'
     },
     {
-        title: 'Resume Reviewer',
-        description: 'Get your resume reviewed by AI to improve your chances of landing your dream job.',
+        title: 'PDF Reviewer',
+        description: 'Get your PDF reviewed by AI to improve your chances of landing your dream job.',
         Icon: FileText,
         bg: { from: '#12B7AC', to: '#08B6CE' },
-        path: '/ai/review-resume'
+        path: '/ai/review-pdf'
     }
 ]
 
