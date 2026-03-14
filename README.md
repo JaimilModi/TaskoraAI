@@ -47,7 +47,7 @@ Upload your resume or any PDF document and receive AI-powered feedback to improv
 ```
 TaskoraAI/
 │
-├── client/
+├── server/
 │   ├── configs/
 │   ├── controllers/
 │   ├── middlewares/
@@ -56,7 +56,7 @@ TaskoraAI/
 │   ├── package.json
 │   └── vercel.json
 │
-├── server/
+├── client/
 │    ├── public/
 │    ├── src/
 │    ├── index.html
