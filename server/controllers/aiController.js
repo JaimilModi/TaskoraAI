@@ -8,7 +8,7 @@ import pdf from "pdf-parse/lib/pdf-parse.js";
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/v1/",
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/v1",
 });
 
 export const generateArticle = async (req, res) => {
