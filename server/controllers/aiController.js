@@ -8,7 +8,7 @@ import pdf from "pdf-parse/lib/pdf-parse.js";
 
 // NVIDIA DeepSeek AI Setup
 const AI = new OpenAI({
-  apiKey: process.env.NVIDIA_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
   baseURL: "https://integrate.api.nvidia.com/v1",
 });
 
