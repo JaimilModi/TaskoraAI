@@ -6,11 +6,13 @@ import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import pdf from "pdf-parse/lib/pdf-parse.js";
 
+// NVIDIA DeepSeek AI Setup
 const AI = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/v1",
+  apiKey: process.env.NVIDIA_API_KEY,
+  baseURL: "https://integrate.api.nvidia.com/v1",
 });
 
+// ------------------- ARTICLE GENERATOR -------------------
 export const generateArticle = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -25,20 +27,37 @@ export const generateArticle = async (req, res) => {
       });
     }
 
+    const improvedPrompt = `
+    Write a well-structured article on the topic below.
+
+    Topic: ${prompt}
+
+    The article should include:
+    - Introduction
+    - Main sections with headings
+    - Conclusion
+    `;
+
     const response = await AI.chat.completions.create({
-      model: "gemini-2.0-flash",
+      model: "deepseek-ai/deepseek-v3.1",
       messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
+        { role: "system", content: "You are a professional article writer." },
+        { role: "user", content: improvedPrompt },
       ],
       temperature: 0.7,
+      top_p: 0.9,
       max_tokens: length,
+      extra_body: {
+        chat_template_kwargs: { thinking: true },
+      },
     });
+
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content},'article')`;
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, ${prompt}, ${content}, 'article')
+    `;
 
     if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
@@ -55,6 +74,7 @@ export const generateArticle = async (req, res) => {
   }
 };
 
+// ------------------- BLOG TITLE GENERATOR -------------------
 export const generateBlogTitle = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -70,19 +90,25 @@ export const generateBlogTitle = async (req, res) => {
     }
 
     const response = await AI.chat.completions.create({
-      model: "gemini-2.0-flash",
+      model: "deepseek-ai/deepseek-v3.1",
       messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
+        { role: "system", content: "Generate catchy blog titles." },
+        { role: "user", content: prompt },
       ],
-      temperature: 0.7,
-      max_tokens: 100,
+      temperature: 0.9,
+      top_p: 0.9,
+      max_tokens: 60,
+      extra_body: {
+        chat_template_kwargs: { thinking: true },
+      },
     });
+
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${prompt}, ${content},'blog-title')`;
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, ${prompt}, ${content}, 'blog-title')
+    `;
 
     if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
@@ -99,6 +125,7 @@ export const generateBlogTitle = async (req, res) => {
   }
 };
 
+// ------------------- IMAGE GENERATOR -------------------
 export const generateImage = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -108,31 +135,33 @@ export const generateImage = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "This Feature is only available for primum subscriptions",
+        message: "This Feature is only available for premium subscriptions",
       });
     }
 
     const formData = new FormData();
     formData.append("prompt", prompt);
+
     const { data } = await axios.post(
       "https://clipdrop-api.co/text-to-image/v1",
       formData,
       {
         headers: { "x-api-key": process.env.CLICKDROP_API_KEY },
         responseType: "arraybuffer",
-      }
+      },
     );
 
     const base64Image = `data:image/png;base64,${Buffer.from(
       data,
-      "binary"
+      "binary",
     ).toString("base64")}`;
 
     const { secure_url } = await cloudinary.uploader.upload(base64Image);
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type, publish) VALUES (${userId}, ${prompt}, ${secure_url},'image', ${
-      publish ?? false
-    })`;
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type, publish)
+      VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})
+    `;
 
     res.json({ success: true, content: secure_url });
   } catch (error) {
@@ -141,6 +170,7 @@ export const generateImage = async (req, res) => {
   }
 };
 
+// ------------------- REMOVE IMAGE BACKGROUND -------------------
 export const removeImageBackground = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -150,7 +180,7 @@ export const removeImageBackground = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "This Feature is only available for primum subscriptions",
+        message: "This Feature is only available for premium subscriptions",
       });
     }
 
@@ -163,7 +193,10 @@ export const removeImageBackground = async (req, res) => {
       ],
     });
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, 'Remove Background from image', ${secure_url},'image')`;
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, 'Remove Background from image', ${secure_url}, 'image')
+    `;
 
     res.json({ success: true, content: secure_url });
   } catch (error) {
@@ -172,6 +205,7 @@ export const removeImageBackground = async (req, res) => {
   }
 };
 
+// ------------------- REMOVE IMAGE OBJECT -------------------
 export const removeImageObject = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -182,7 +216,7 @@ export const removeImageObject = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "This Feature is only available for primum subscriptions",
+        message: "This Feature is only available for premium subscriptions",
       });
     }
 
@@ -193,7 +227,10 @@ export const removeImageObject = async (req, res) => {
       resource_type: "image",
     });
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, ${`Removed ${object} from image`}, ${imageUrl},'image')`;
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, ${`Removed ${object} from image`}, ${imageUrl}, 'image')
+    `;
 
     res.json({ success: true, content: imageUrl });
   } catch (error) {
@@ -202,6 +239,7 @@ export const removeImageObject = async (req, res) => {
   }
 };
 
+// ------------------- PDF REVIEW -------------------
 export const reviewPdf = async (req, res) => {
   try {
     const { userId } = req.auth();
@@ -211,7 +249,7 @@ export const reviewPdf = async (req, res) => {
     if (plan !== "premium") {
       return res.json({
         success: false,
-        message: "This Feature is only available for primum subscriptions",
+        message: "This Feature is only available for premium subscriptions",
       });
     }
 
@@ -225,24 +263,43 @@ export const reviewPdf = async (req, res) => {
     const dataBuffer = fs.readFileSync(PDF.path);
     const pdfData = await pdf(dataBuffer);
 
-    const prompt = `Please review the attached PDF as a whole document. Provide detailed and constructive feedback on its content, structure, clarity, tone, and overall presentation. Treat this as a single, complete PDF for analysis and share specific suggestions for improvement. (note:just start with Here's a detailed and constructive review or anything and give max 600 words content):\n\n${pdfData.text}`;
+    const prompt = `
+    Review the following PDF content and provide:
+    - Content feedback
+    - Structure feedback
+    - Clarity feedback
+    - Tone feedback
+    - Suggestions for improvement
+
+    PDF Content:
+    ${pdfData.text}
+    `;
 
     const response = await AI.chat.completions.create({
-      model: "gemini-2.0-flash",
+      model: "deepseek-ai/deepseek-v3.1",
       messages: [
         {
-          role: "user",
-          content: prompt,
+          role: "system",
+          content: "You are a professional document reviewer.",
         },
+        { role: "user", content: prompt },
       ],
-      temperature: 0.7,
+      temperature: 0.5,
+      top_p: 0.8,
       max_tokens: 1000,
+      extra_body: {
+        chat_template_kwargs: { thinking: true },
+      },
     });
+
     const content = response.choices[0].message.content;
 
-    await sql` INSERT INTO creations (user_id, prompt, content, type) VALUES (${userId}, 'Review the pdf', ${content},'review-pdf')`;
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, 'Review the pdf', ${content}, 'review-pdf')
+    `;
 
-    res.json({ success: true, content: content });
+    res.json({ success: true, content });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
