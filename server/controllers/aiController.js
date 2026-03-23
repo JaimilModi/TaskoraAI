@@ -28,15 +28,17 @@ export const generateArticle = async (req, res) => {
     }
 
     const improvedPrompt = `
-    Write a well-structured article on the topic below.
+Write a well-structured article on the topic below.
 
-    Topic: ${prompt}
+Topic: ${prompt}
 
-    The article should include:
-    - Introduction
-    - Main sections with headings
-    - Conclusion
-    `;
+The article must include:
+- Introduction
+- Main sections with headings
+- Conclusion
+
+Write approximately ${length} words.
+`;
 
     const response = await AI.chat.completions.create({
       model: "deepseek-ai/deepseek-v3.1",
@@ -46,7 +48,7 @@ export const generateArticle = async (req, res) => {
       ],
       temperature: 0.7,
       top_p: 0.9,
-      max_tokens: length,
+      max_tokens: 800,
       extra_body: {
         chat_template_kwargs: { thinking: true },
       },
@@ -263,17 +265,32 @@ export const reviewPdf = async (req, res) => {
     const dataBuffer = fs.readFileSync(PDF.path);
     const pdfData = await pdf(dataBuffer);
 
-    const prompt = `
-    Review the following PDF content and provide:
-    - Content feedback
-    - Structure feedback
-    - Clarity feedback
-    - Tone feedback
-    - Suggestions for improvement
+    let text = pdfData.text;
 
-    PDF Content:
-    ${pdfData.text}
-    `;
+    // Limit text size to avoid token overflow
+    if (text.length > 12000) {
+      text = text.substring(0, 12000);
+    }
+
+    const prompt = `
+You are a professional document reviewer.
+
+Review the following PDF content and provide:
+- Content feedback
+- Structure feedback
+- Clarity feedback
+- Tone feedback
+- Suggestions for improvement
+
+IMPORTANT:
+Write between 500 and 600 words only.
+Do not exceed 600 words.
+Do not write less than 500 words.
+
+PDF Content:
+${text}
+`;
+
 
     const response = await AI.chat.completions.create({
       model: "deepseek-ai/deepseek-v3.1",
@@ -286,7 +303,7 @@ export const reviewPdf = async (req, res) => {
       ],
       temperature: 0.5,
       top_p: 0.8,
-      max_tokens: 1000,
+      max_tokens: 900,
       extra_body: {
         chat_template_kwargs: { thinking: true },
       },
