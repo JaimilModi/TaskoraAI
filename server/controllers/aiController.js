@@ -281,16 +281,13 @@ Review the following PDF content and provide:
 - Clarity feedback
 - Tone feedback
 - Suggestions for improvement
-
 IMPORTANT:
 Write between 500 and 600 words only.
 Do not exceed 600 words.
 Do not write less than 500 words.
-
 PDF Content:
 ${text}
 `;
-
 
     const response = await AI.chat.completions.create({
       model: "deepseek-ai/deepseek-v3.1",
